@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
 
 const ANY_SERVER = true;
@@ -38,15 +39,18 @@ client.on('messageCreate', (message)=> {
   if (!ANY_SERVER && !SERVER_IDS.includes(message.guildId))
     return;
 
-  const lowercaseContent = message.content.toLowerCase()
+  const lowercaseContent = message.content.toLowerCase();
 
-  if (!ALL_WORDS && !lowercaseContent.match(whitelistRegex))
+  if (!ALL_WORDS && !lowercaseContent.match(whitelistRegex)) {
     return message.delete();
+  }
 
-  for (const word of WORD_WHITELIST) {
-    if (!lowercaseContent.match(word))
-      return message.delete();
+  else if (ALL_WORDS) {
+    for (const word of WORD_WHITELIST) {
+      if (!lowercaseContent.match(word))
+        return message.delete();
+    }
   }
 });
 
-client.login('');
+client.login(process.env.BOT_TOKEN);
