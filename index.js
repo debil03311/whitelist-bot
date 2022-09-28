@@ -6,9 +6,13 @@ const SERVER_IDS = [
   '',
 ]
 
+const ALL_WORDS = false;
+
 const WORD_WHITELIST = [
   '',
 ]
+
+const whitelistRegex = new RegExp(WORD_WHITELIST.join('|'));
 
 const client = new Client({
   intents: [
@@ -34,9 +38,14 @@ client.on('messageCreate', (message)=> {
   if (!ANY_SERVER && !SERVER_IDS.includes(message.guildId))
     return;
 
+  const lowercaseContent = message.content.toLowerCase()
+
+  if (!ALL_WORDS && !lowercaseContent.match(whitelistRegex))
+    return message.delete();
+
   for (const word of WORD_WHITELIST) {
-    if (!message.content.toLowerCase().match(word))
-      message.delete();
+    if (!lowercaseContent.match(word))
+      return message.delete();
   }
 });
 
